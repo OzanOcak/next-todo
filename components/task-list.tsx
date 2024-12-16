@@ -15,9 +15,9 @@ import { Textarea } from "./ui/textarea";
 import { dataProps, updateTask } from "@/actions/update-tasks";
 import completeTask from "@/actions/complete-tasks";
 import { Button } from "./ui/button";
-import { StarFilledIcon } from "@radix-ui/react-icons";
-import { StarIcon } from "lucide-react";
+import { StarFilledIcon, StarIcon, SunIcon } from "@radix-ui/react-icons";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 type Props = {
   tasks: Task[];
@@ -48,6 +48,19 @@ export default function TaskList({ tasks, accentClassName }: Props) {
   async function toggleImportant(task: Task) {
     const data = {
       isImportant: !task.isImportant,
+    };
+    await updateTask(task.id, data);
+  }
+
+  async function handleRemoveFromMyDay(task: Task) {
+    const data = {
+      addedToMyDayAt: null,
+    };
+    await updateTask(task.id, data);
+  }
+  async function handleAddToMyDay(task: Task) {
+    const data = {
+      addedToMyDayAt: new Date().toISOString(),
     };
     await updateTask(task.id, data);
   }
@@ -92,6 +105,28 @@ export default function TaskList({ tasks, accentClassName }: Props) {
                     defaultValue={task.note ?? ""}
                     onChange={(e) => updateNote(task, e.target.value)}
                   />
+                  {task.addedToMyDayAt &&
+                  task.addedToMyDayAt > format(new Date(), "yyyy-MM-dd") ? (
+                    <Button
+                      className={cn(
+                        "bg-accent hover:bg-accent/50",
+                        accentClassName
+                      )}
+                      onClick={() => handleRemoveFromMyDay(task)}
+                    >
+                      <SunIcon className="mr-2 w-6 h-6" /> Remove from My Day
+                    </Button>
+                  ) : (
+                    <Button
+                      className={cn(
+                        "bg-accent hover:bg-accent/50",
+                        accentClassName
+                      )}
+                      onClick={() => handleAddToMyDay(task)}
+                    >
+                      <SunIcon className="mr-2 w-6 h-6" /> Add to My Day
+                    </Button>
+                  )}
                 </div>
               </DrawerContent>
             </Drawer>

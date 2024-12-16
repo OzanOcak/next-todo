@@ -41,7 +41,10 @@ export default async function Page() {
         </div>
       )}
       <div>
-        <TaskListCompleted tasks={resCompleted} />
+        <TaskListCompleted
+          tasks={resCompleted}
+          accentClassName="text-accent-blue-foreground"
+        />
       </div>
       <div>
         <AddTask className="text-accent-blue-foreground bg-accent hover:bg-accent/50" />

@@ -2,19 +2,28 @@
 import { KeyboardEvent, useState } from "react";
 import { Button } from "./ui/button";
 import { PlusIcon } from "@radix-ui/react-icons";
-import { createTask } from "@/actions/create-tasks";
+import { createTask, CreateTaskSchema } from "@/actions/create-tasks";
 import { Input } from "./ui/input";
 
 type Props = {
   className: string;
+  isImportant?: boolean;
+  isMyDay?: boolean;
 };
 export default function AddTask(props: Props) {
-  const { className } = props;
+  const { className, isImportant, isMyDay } = props;
   const [isAdding, setIsAdding] = useState(false);
   const [title, setTitle] = useState("");
   async function handleKeyDown(e: KeyboardEvent) {
     if (e.key === "Enter") {
-      await createTask(title);
+      const data: CreateTaskSchema = {
+        title: title,
+        isImportant: isImportant ? true : false,
+      };
+      if (isMyDay) {
+        data.addedToMyDayAt = new Date().toISOString();
+      }
+      await createTask(data);
       setTitle("");
     }
   }

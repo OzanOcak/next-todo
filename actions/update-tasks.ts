@@ -9,6 +9,7 @@ export type dataProps = {
   title?: string;
   note?: string;
   isImportant?: boolean;
+  addedToMyDayAt?: string | null;
 };
 
 export async function updateTask(id: number, data: dataProps) {
@@ -19,9 +20,10 @@ export async function updateTask(id: number, data: dataProps) {
     };
   }
   const update = {
-    title: data?.title,
-    note: data?.note,
-    isImportant: data?.isImportant,
+    title: data.title,
+    note: data.note,
+    isImportant: data.isImportant,
+    addedToMyDayAt: data.addedToMyDayAt,
   };
   await db
     .update(tasks)

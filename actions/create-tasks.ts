@@ -5,7 +5,13 @@ import { db } from "@/lib/db";
 import { tasks } from "@/lib/schema";
 import { revalidatePath } from "next/cache";
 
-export async function createTask(title: string) {
+export type CreateTaskSchema = {
+  title: string;
+  isImportant: boolean;
+  addedToMyDayAt?: string;
+};
+
+export async function createTask(data: CreateTaskSchema) {
   const session = await auth();
 
   // Check for session and user ID
@@ -16,14 +22,15 @@ export async function createTask(title: string) {
   }
 
   // Ensure userId is a string and title is provided
-  const userId = session.user.id;
+  const dataToInsert = {
+    userId: session.user.id,
+    title: data.title,
+    isImportant: data.isImportant,
+    addedToMyDayAt: data.addedToMyDayAt,
+  };
 
   // Insert task into the database
-  await db.insert(tasks).values({
-    userId, // Ensure userId is correctly typed
-    title,
-    // Include other required fields if necessary
-  });
+  await db.insert(tasks).values(dataToInsert);
 
   revalidatePath("/tasks");
 }
